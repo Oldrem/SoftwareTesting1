@@ -1,5 +1,7 @@
 import org.junit.Test;
 
+import java.util.Random;
+
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,16 +73,44 @@ public class BTreeTest {
         assertTrue(checkKeyAmount(btree.getRoot()));
     }
 
+    @Test
+    public void keyOrderTest(){
+        /*Random random = new Random();
+        for (int i = 0; i < 100; i++){
+            btree.add(random.nextInt());
+        }*/
+        btree.add(1);
+        btree.add(2);
+        btree.add(3);
+        btree.add(4);
+        btree.add(5);
+        btree.add(6);
+        assertTrue(checkKeyOrder(btree.getRoot()));
+    }
+
     private boolean checkKeyAmount(BTree.Node<Integer> node){
         if (node.numberOfKeys() < order-1 && !node.equals(btree.getRoot()))
             return false;
-
         for (int i = 0; i < node.numberOfChildren(); i++){
             if (!checkKeyAmount(node.getChild(i))){
                 return false;
             }
         }
+        return true;
+    }
 
+    private boolean checkKeyOrder(BTree.Node<Integer> node){
+        int previousKey = node.getKey(0);
+        for (int i = 1; i < node.numberOfKeys(); i++){
+            if (previousKey > node.getKey(i)){
+                return false;
+            }
+        }
+        for (int i = 0; i < node.numberOfChildren(); i++){
+            if (!checkKeyAmount(node.getChild(i))){
+                return false;
+            }
+        }
         return true;
     }
 }
